@@ -13,15 +13,11 @@ const keyResultSchema = new Schema({
     },
     currentAchievement: {
         type: Number,
-        required: true
+        default: 0
     },
     unit: {
         type: String,
         required: true
-    },
-    status: {
-        type: String,
-        default: 'NOT_STARTED'
     },
     deadlineAt: {
         type: Date,

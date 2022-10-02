@@ -17,7 +17,7 @@ let objectiveSchema = new Schema({
     },
     status: {
         type: String,
-        default: 'NOT_STARTED'
+        required: true
     },
     deadlineAt: {
         type: Date,

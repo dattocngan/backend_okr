@@ -47,12 +47,13 @@ exports.getObjective = async (req, res, next) => {
 //Create objective
 exports.createObjective = async (req, res, next) => {
     try {
-        const {type, content, reason, deadlineAt, keyResults} = req.body;
+        const {type, content, reason, status, deadlineAt, keyResults} = req.body;
 
         const objective = await Objective.create({
             type: type,
             content: content,
             reason: reason,
+            status: status,
             deadlineAt: deadlineAt,
             userId: req.user
         });
@@ -89,17 +90,25 @@ exports.editObjective = async (req, res, next) => {
             throw error;
         }
 
-        const {type, content, reason, deadlineAt, keyResults} = req.body;
+        const {type, content, reason, status, deadlineAt, keyResults} = req.body;
 
         objective.type = type || objective.type;
         objective.content = content || objective.content;
         objective.reason = reason || objective.reason;
+        objective.status = status || objective.status;
         objective.deadlineAt = deadlineAt || objective.deadlineAt;
 
         await objective.save();
 
         for (const keyResult of keyResults) {
-            await KeyResult.updateOne({_id: keyResult._id}, keyResult);
+            if (keyResult._id) {
+                await KeyResult.updateOne({_id: keyResult._id}, keyResult);
+            } else {
+                await KeyResult.create({
+                    ...keyResult,
+                    objectiveId: objective._id
+                });
+            }
         }
 
         res.status(200).json({
