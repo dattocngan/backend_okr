@@ -96,7 +96,7 @@ exports.editUser = async (req, res, next) => {
 
         user.name = name || user.name;
         user.birthday = birthday || user.birthday;
-        user.sex = sex || user.sex;
+        user.sex = sex !== undefined ? sex : user.sex;
 
         if (oldPassword && newPassword) {
             const isEqual = await bcrypt.compare(oldPassword, user.password);
