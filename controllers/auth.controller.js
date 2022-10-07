@@ -9,6 +9,13 @@ const User = require("../models/user");
 exports.signup = async (req, res, next) => {
     try {
         const {username, password, name} = req.body;
+
+        if (password.length < 8) {
+            const error = new Error('Password must have min length 8!');
+            error.statusCode = 403;
+            throw error;
+        }
+
         const user = await User.findOne({username : username});
 
         if (user) {
@@ -40,6 +47,13 @@ exports.signup = async (req, res, next) => {
 exports.login = async (req, res, next) => {
     try {
         const {username, password} = req.body;
+
+        if (password.length < 8) {
+            const error = new Error('Password must have min length 8!');
+            error.statusCode = 403;
+            throw error;
+        }
+
         const user = await User.findOne({username : username});
 
         if (!user) {
@@ -99,6 +113,11 @@ exports.editUser = async (req, res, next) => {
         user.sex = sex !== undefined ? sex : user.sex;
 
         if (oldPassword && newPassword) {
+            if (oldPassword.length < 8 || newPassword.length < 8) {
+                const error = new Error('Password must have min length 8');
+                error.statusCode = 403;
+                throw error;
+            }
             const isEqual = await bcrypt.compare(oldPassword, user.password);
 
             if (!isEqual) {
